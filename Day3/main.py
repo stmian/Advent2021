@@ -31,3 +31,10 @@ for i, e in enumerate(ones):
 print(int(gamma, 2) *int(epsilon, 2))
 
 
+#### Part 2
+
+import numpy as np
+import pandas as pd
+
+data = np.genfromtxt('input.csv',dtype=str)
+data_df = pd.DataFrame(data=[list(i) for i in data])
