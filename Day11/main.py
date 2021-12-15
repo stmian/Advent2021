@@ -43,18 +43,19 @@ def incrementNeighbors(grid,x,y):
             grid[x+1][y-1] += 1
         if(x > 0  and y < m):
             grid[x-1][y+1] += 1
-        grid[x][y] = 0
+        grid[x][y] = -100
         return grid
     except IndexError:
         print("Ehh")  
         print((x,y))
 
 
-steps = 5
+steps = 100
 ilum = 0
 i1 = 0
 
 for step in range(steps):
+    flashedStep = []
     
     incrementAll(g)
     running = True
@@ -67,17 +68,17 @@ for step in range(steps):
             y = itemindex[1][i]
 #            print(x,y)
  #           print(g[x][y])
-            g = incrementNeighbors(g,x, y)            
-            
-            ilum += 1
+            if((x,y) not in flashedStep):
+                g = incrementNeighbors(g,x,y)
+                flashedStep.append((x,y))
+                ilum += 1
             
         if np.count_nonzero(g > 9) > 0:
             running = True
         else:
             running = False
-            print(g)
-            print(ilum)
-                
+        print(g)
+    g = np.where(g<0,0,g)                
     
 print(ilum)    
     
