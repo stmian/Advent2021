@@ -50,7 +50,7 @@ def incrementNeighbors(grid,x,y):
         print((x,y))
 
 
-steps = 100
+steps = 300
 ilum = 0
 i1 = 0
 
@@ -77,13 +77,16 @@ for step in range(steps):
             running = True
         else:
             running = False
-        print(g)
+
     g = np.where(g<0,0,g)                
-    
+    if  np.all((g == 0)):
+        print("SYNC")
+        print(step+1)    
+        break;
+        
 print(ilum)    
     
-    
-    
+
     
     
     
