@@ -88,7 +88,13 @@ for row in range(len(data)):
 print(sum(lows) + len(lows))        
         
         
+#Part 2
 
+sizes = []
+
+for basin in basins:
+    size = 0
+    
 
 
         

@@ -41,6 +41,7 @@ for i in range(0,days):
 
 def solve(data, days):
     tracker = [data.count(i) for i in range(9)]
+    print(tracker)
     for day in range(days):
         tracker[(day + 7) % 9] += tracker[day % 9]
     return sum(tracker)
