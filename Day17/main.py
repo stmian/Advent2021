@@ -12,8 +12,8 @@ x = data[2].split("..")
 y = data[3].split("..")
 xmin = int(x[0][2:5])
 xmax = int(x[1][0:3])
-ymin = int(y[0][2:5])
-ymax = int(y[1][0:3])
+ymax = int(y[0][2:5])
+ymin = int(y[1][0:3])
 
 
 def step(origin,x,y):
@@ -31,6 +31,7 @@ def step(origin,x,y):
 
 def checkTarget(x,y):
     if(x >= xmin and x <= xmax and y >= ymax and y <= ymin):
+        print("on target")
         return True
     else:
         return False
@@ -58,17 +59,18 @@ print(start)
 #print(step(start,5,4))
 #print(checkPass(start[0],start[1]))
 
-for xV in range(0,50):
+for xV in range(0,20):
     for yV in range(-20,20):
         
         currX,currY = step(start,xV,yV)
         
-        if not checkTarget(currX,currY):
+        while not checkTarget(currX,currY):
             currX,currY = step((currX,currY),xV,yV)
             
             if checkPass(currX,currY):
                 print("failed")
                 break;
+                
         if checkTarget(currX,currY):
             print("OMG")
             win.append((currX,currY))
