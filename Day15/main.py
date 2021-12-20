@@ -1,79 +1,66 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Dec 17 01:12:28 2021
+from queue import PriorityQueue
 
-@author: Sami
-"""
+#This code was taken from https://pastebin.com/5AzwU5EX
 
-import numpy as np
-data = open("input.txt").read().strip().split("\n")
-data2 = [list(i) for i in data]
-grid = np.asarray(data2)
+INPUT_PATH = "input.txt"
 
 
-from collections import defaultdict
-
-class Graph():
-    def __init__(self):
-        """
-        self.edges is a dict of all possible next nodes
-        e.g. {'X': ['A', 'B', 'C', 'E'], ...}
-        self.weights has all the weights between two nodes,
-        with the two nodes as a tuple as the key
-        e.g. {('X', 'A'): 7, ('X', 'B'): 2, ...}
-        """
-        self.edges = defaultdict(list)
-        self.weights = {}
-    
-    def add_edge(self, from_node, to_node, weight):
-        # Note: assumes edges are bi-directional
-        self.edges[from_node].append(to_node)
-        self.edges[to_node].append(from_node)
-        self.weights[(from_node, to_node)] = weight
-        self.weights[(to_node, from_node)] = weight
-        
-graph = Graph()
-
-for x in range(100):
-    for y in range(100):
-        graph.add_edge(x,y,grid[x][y])        
+def get_data(filename):
+    with open(filename) as file:
+        lines = file.read().splitlines()
+    return [[int(x) for x in line] for line in lines]
 
 
-def dijsktra(graph, initial, end):
-    # shortest paths is a dict of nodes
-    # whose value is a tuple of (previous node, weight)
-    shortest_paths = {initial: (None, 0)}
-    current_node = initial
-    visited = set()
-    
-    while current_node != end:
-        visited.add(current_node)
-        destinations = graph.edges[current_node]
-        weight_to_current_node = shortest_paths[current_node][1]
+def manhattan_distance(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
-        for next_node in destinations:
-            weight = graph.weights[(current_node, next_node)] + weight_to_current_node
-            if next_node not in shortest_paths:
-                shortest_paths[next_node] = (current_node, weight)
-            else:
-                current_shortest_weight = shortest_paths[next_node][1]
-                if current_shortest_weight > weight:
-                    shortest_paths[next_node] = (current_node, weight)
-        
-        next_destinations = {node: shortest_paths[node] for node in shortest_paths if node not in visited}
-        if not next_destinations:
-            return "Route Not Possible"
-        # next node is the destination with the lowest weight
-        current_node = min(next_destinations, key=lambda k: next_destinations[k][1])
-    
-    # Work back through destinations in shortest path
-    path = []
-    while current_node is not None:
-        path.append(current_node)
-        next_node = shortest_paths[current_node][0]
-        current_node = next_node
-    # Reverse path
-    path = path[::-1]
-    return path
 
-dijsktra(graph, 0, 9)
+def find_lowest_risk(cave_map):
+    """Pathfinding using A*"""
+    start = (0, 0)
+    destination = (len(cave_map[0]) - 1, len(cave_map) - 1)
+    frontier = PriorityQueue()
+    frontier.put((0, start))
+    came_from = {start: None}
+    risk_so_far = {start: 0}
+    offsets = ((1, 0), (0, 1), (-1, 0), (0, -1))
+    pos = None
+    while not frontier.empty():
+        pos = frontier.get()[1]
+        if pos == destination:
+            break
+        for offset in offsets:
+            new_pos = (pos[0] + offset[0], pos[1] + offset[1])
+            if 0 <= new_pos[0] < len(cave_map[0]) and 0 <= new_pos[1] < len(cave_map):
+                new_risk = risk_so_far[pos] + cave_map[new_pos[1]][new_pos[0]]
+                if new_pos not in came_from or new_risk < risk_so_far[new_pos]:
+                    risk_so_far[new_pos] = new_risk
+                    priority = new_risk + manhattan_distance(new_pos, destination)
+                    frontier.put((priority, new_pos))
+                    came_from[new_pos] = pos
+    return risk_so_far[pos]
+
+
+def part_1(cave_map):
+    return find_lowest_risk(cave_map)
+
+
+def part_2(cave_map):
+    original_width = len(cave_map[0])
+    original_hight = len(cave_map)
+    for i in range(4):
+        for line in cave_map:
+            right_part = [x % 9 + 1 for x in line[-original_width:]]
+            line.extend(right_part)
+        for line in cave_map[original_hight*i:original_hight*(i+1)]:
+            new_line = [x % 9 + 1 for x in line]
+            cave_map.append(new_line)
+
+    return find_lowest_risk(cave_map)
+
+
+if __name__ == "__main__":
+
+    challenge_data = get_data(INPUT_PATH)
+    print(part_1(challenge_data))
+    print(part_2(challenge_data))
