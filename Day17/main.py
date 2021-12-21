@@ -51,7 +51,7 @@ start = (0,0)
 currX = 0
 currY = 0
 win = []
-
+peaks = []
 
 print(start)
 
@@ -59,13 +59,20 @@ print(start)
 #print(step(start,5,4))
 #print(checkPass(start[0],start[1]))
 
-for xV in range(0,20):
-    for yV in range(-20,20):
+for xV in range(1,30):
+    for yV in range(-20,40):
+        print(xV,yV)
+        peak = 0
         
         currX,currY = step(start,xV,yV)
+
+        if xV == 1 and yV == 1:
+            break;
         
         while not checkTarget(currX,currY):
             currX,currY = step((currX,currY),xV,yV)
+            if currY > peak:
+                peak = currY
             
             if checkPass(currX,currY):
                 print("failed")
@@ -74,10 +81,11 @@ for xV in range(0,20):
         if checkTarget(currX,currY):
             print("OMG")
             win.append((currX,currY))
+            peaks.append(peak)
         
      
-        
-        
+print(win)        
+print(max(peaks))        
         
         
         
