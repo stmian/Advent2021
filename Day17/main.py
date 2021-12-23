@@ -59,8 +59,8 @@ print(start)
 #print(step(start,5,4))
 #print(checkPass(start[0],start[1]))
 
-for xV in range(1,30):
-    for yV in range(-20,40):
+for xV in range(1,100):
+    for yV in range(-30,100):
         print(xV,yV)
         peak = 0
         
